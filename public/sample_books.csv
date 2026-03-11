@@ -1,0 +1,11 @@
+Title,Author,ISBN,Category,Publisher,Publish Year,Total Copies,Available Copies,Location
+The Great Gatsby,F. Scott Fitzgerald,978-0743273565,Fiction,Scribner,1925,3,2,A-1-01
+To Kill a Mockingbird,Harper Lee,978-0061120084,Fiction,J.B. Lippincott,1960,2,1,A-1-02
+1984,George Orwell,978-0451524935,Fiction,Signet Classics,1949,4,3,A-1-03
+Pride and Prejudice,Jane Austen,978-0141439518,Fiction,Penguin Classics,1813,2,2,A-1-04
+The Catcher in the Rye,J.D. Salinger,978-0316769174,Fiction,Little Brown,1951,3,1,A-1-05
+JavaScript: The Good Parts,Douglas Crockford,978-0596517748,Technology,O'Reilly,2008,2,2,B-1-01
+Clean Code,Robert C. Martin,978-0132350884,Technology,Prentice Hall,2008,3,2,B-1-02
+Design Patterns,Gang of Four,978-0201633610,Technology,Addison-Wesley,1994,1,1,B-1-03
+A Brief History of Time,Stephen Hawking,978-0553380163,Science,Bantam,1988,2,1,C-1-01
+The Selfish Gene,Richard Dawkins,978-0192860926,Science,Oxford University Press,1976,1,1,C-1-02

@@ -1,0 +1,11 @@
+Name,Email,Phone,Address,Membership Type,Status,Join Date,Expiry Date,Total Fines,Paid Fines
+Rajesh Kumar,rajesh@email.com,9876543210,123 Main St Mumbai,standard,active,2023-01-15,2026-01-15,0,0
+Priya Singh,priya@email.com,9876543211,456 Park Ave Delhi,premium,active,2023-02-20,2026-02-20,500,500
+Amit Patel,amit@email.com,9876543212,789 Elm St Bangalore,standard,active,2023-03-10,2026-03-10,0,0
+Sneha Sharma,sneha@email.com,9876543213,321 Oak Rd Hyderbad,premium,active,2023-04-05,2026-04-05,300,0
+Vikram Desai,vikram@email.com,9876543214,654 Pine St Chennai,standard,inactive,2022-05-12,2025-05-12,1200,800
+Neha Gupta,neha@email.com,9876543215,987 Birch Ave Pune,premium,active,2023-06-18,2026-06-18,0,0
+Arjun Rao,arjun@email.com,9876543216,147 Cedar Ln Kolkata,standard,active,2023-07-22,2026-07-22,800,500
+Divya Nair,divya@email.com,9876543217,258 Maple Dr Ahmedabad,premium,active,2023-08-30,2026-08-30,0,0
+Rohan Kapoor,rohan@email.com,9876543218,369 Walnut St Jaipur,standard,active,2023-09-14,2026-09-14,400,400
+Ananya Verma,ananya@email.com,9876543219,741 Spruce Pl Lucknow,premium,active,2023-10-25,2026-10-25,0,0

@@ -1,0 +1,218 @@
+<style>
+    .profile-header {
+        background: var(--gradient);
+        color: white;
+        padding: 30px;
+        border-radius: 20px 20px 0 0;
+        margin: -24px -24px 20px -24px;
+        text-align: center;
+    }
+    
+    .profile-icon {
+        width: 100px;
+        height: 100px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        border: 4px solid rgba(255,255,255,0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .profile-icon:hover {
+        transform: scale(1.05);
+        border-color: white;
+    }
+    
+    .profile-icon i {
+        font-size: 50px;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .info-label {
+        font-weight: 600;
+        color: var(--primary);
+        width: 140px;
+        background: #f8f9fa;
+        padding: 12px 15px;
+        border-radius: 12px 0 0 12px;
+    }
+    
+    .info-value {
+        padding: 12px 15px;
+        background: white;
+        border-radius: 0 12px 12px 0;
+        border-left: 3px solid var(--primary);
+        color: #555;
+    }
+    
+    .profile-table {
+        border: none;
+        background: transparent;
+        width: 100%;
+    }
+    
+    .profile-table tr {
+        margin-bottom: 12px;
+        display: flex;
+        background: #f8f9fa;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+    
+    .profile-table tr:hover {
+        transform: translateX(8px);
+        box-shadow: var(--shadow-sm);
+        background: #fff;
+    }
+    
+    .profile-table td {
+        border: none;
+        flex: 1;
+    }
+    
+    .section-title-icon {
+        color: var(--primary);
+        margin-right: 10px;
+    }
+    
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    
+    @media (max-width: 768px) {
+        .profile-table tr {
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+        .info-label {
+            width: 100%;
+            border-radius: 12px 12px 0 0;
+        }
+        .info-value {
+            border-radius: 0 0 12px 12px;
+            border-left: none;
+            border-top: 1px solid #e0e0e0;
+        }
+        .action-buttons {
+            flex-direction: column;
+            gap: 10px;
+        }
+        .action-buttons a, .action-buttons button {
+            width: 100%;
+        }
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <span class="navbar-brand">
+            <i class="fas fa-user-circle me-2"></i>Student Profile
+        </span>
+        <div class="d-flex">
+            <span class="navbar-text me-3">
+                <i class="fas fa-user me-1"></i> {{ $ctrl.profile.name }}
+            </span>
+            <a href="#!/dashboard" class="btn btn-outline-light">
+                <i class="fas fa-arrow-left me-2"></i>Back
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4 col-md-8">
+    <div class="card p-4">
+        
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-icon">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <h3 class="mb-2">{{ $ctrl.profile.name }}</h3>
+            <p class="mb-0 opacity-75">
+                <i class="fas fa-envelope me-2"></i>{{ $ctrl.profile.email }}
+            </p>
+        </div>
+        
+        <!-- Personal Information Section -->
+        <h4 class="mb-3">
+            <i class="fas fa-info-circle section-title-icon"></i>Personal Information
+        </h4>
+        
+        <table class="profile-table">
+            <tr>
+                <td class="info-label"><i class="fas fa-user me-2"></i>Full Name</td>
+                <td class="info-value">{{ $ctrl.profile.name }}</td>
+            </tr>
+            
+            <tr>
+                <td class="info-label"><i class="fas fa-envelope me-2"></i>Email</td>
+                <td class="info-value">{{ $ctrl.profile.email }}</td>
+            </tr>
+            
+            <tr>
+                <td class="info-label"><i class="fas fa-university me-2"></i>College</td>
+                <td class="info-value">{{ $ctrl.profile.college || 'Not Provided' }}</td>
+            </tr>
+            
+            <tr>
+                <td class="info-label"><i class="fas fa-book me-2"></i>Department</td>
+                <td class="info-value">{{ $ctrl.profile.department || 'Not Provided' }}</td>
+            </tr>
+            
+            <tr>
+                <td class="info-label"><i class="fas fa-layer-group me-2"></i>Semester</td>
+                <td class="info-value">{{ $ctrl.profile.semester || 'Not Provided' }}</td>
+            </tr>
+            
+            <tr>
+                <td class="info-label"><i class="fas fa-calendar me-2"></i>Year</td>
+                <td class="info-value">{{ $ctrl.profile.year || 'Not Provided' }}</td>
+            </tr>
+            
+            <tr>
+                <td class="info-label"><i class="fas fa-id-card me-2"></i>Register No</td>
+                <td class="info-value">{{ $ctrl.profile.regno || 'Not Provided' }}</td>
+            </tr>
+            
+            <tr>
+                <td class="info-label"><i class="fas fa-phone me-2"></i>Phone</td>
+                <td class="info-value">{{ $ctrl.profile.phone || 'Not Provided' }}</td>
+            </tr>
+            
+            <tr>
+                <td class="info-label"><i class="fas fa-map-marker-alt me-2"></i>Address</td>
+                <td class="info-value">{{ $ctrl.profile.address || 'Not Provided' }}</td>
+            </tr>
+        </table>
+        
+        <!-- Action Buttons -->
+        <div class="action-buttons mt-4">
+            <a href="#!/dashboard" class="btn btn-primary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+            </a>
+            <a href="#!/edit_profile" class="btn btn-warning">
+                <i class="fas fa-edit me-2"></i>Edit Profile
+            </a>
+            <button class="btn btn-danger" ng-click="$ctrl.logout()">
+                <i class="fas fa-sign-out-alt me-2"></i>Logout
+            </button>
+        </div>
+        
+        <!-- Account Info Footer -->
+        <div class="text-center mt-4">
+            <small class="text-muted">
+                <i class="fas fa-shield-alt me-1"></i>
+                Student ID: {{ $ctrl.profile.id }} • Last updated: {{ $ctrl.currentDate | date:'medium' }}
+            </small>
+        </div>
+        
+    </div>
+</div>

@@ -1,0 +1,152 @@
+<style>
+    .exam-header-icon {
+        width: 80px;
+        height: 80px;
+        background: var(--gradient);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+    }
+    .exam-header-icon i {
+        font-size: 2.5rem;
+        color: white;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: #f8f9fa;
+        border-radius: 15px;
+        margin: 20px 0;
+    }
+    .empty-state i {
+        font-size: 4rem;
+        color: var(--secondary);
+        margin-bottom: 20px;
+    }
+    .empty-state p {
+        color: #777;
+        font-size: 1.1rem;
+    }
+    .badge-upcoming {
+        background: var(--gradient-success);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+    }
+    .exam-card {
+        transition: all 0.3s ease;
+    }
+    .exam-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+    }
+    @media (max-width: 768px) {
+        .table {
+            font-size: 0.9rem;
+        }
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.75rem;
+        }
+        .empty-state {
+            padding: 40px 15px;
+        }
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <span class="navbar-brand">
+            <i class="fas fa-clipboard-list me-2"></i>Available Exams
+        </span>
+        <div class="d-flex">
+            <a href="#!/dashboard" class="btn btn-outline-light">
+                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="card p-4">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-4">
+            <div class="exam-header-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h3>Exams Available for Registration</h3>
+            <p class="text-muted">Select an exam to register. You can only register for exams matching your semester.</p>
+        </div>
+        
+        <div class="table-responsive" ng-if="$ctrl.exams.length > 0">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th><i class="fas fa-book-open me-2"></i>Subject</th>
+                        <th><i class="fas fa-calendar-day me-2"></i>Exam Date</th>
+                        <th><i class="fas fa-cog me-2"></i>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="exam-card" ng-repeat="exam in $ctrl.exams">
+                        <td>
+                            <i class="fas fa-book-open me-2" style="color: var(--primary);"></i>
+                            <strong>{{ exam.subject }}</strong>
+                        </td>
+                        <td>
+                            <span class="badge bg-primary">
+                                <i class="far fa-calendar-alt me-1"></i> {{ exam.date }}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-secondary btn-sm" disabled ng-if="exam.registered">
+                                <i class="fas fa-check-circle me-1"></i>Already Registered
+                            </button>
+                            <button class="btn btn-success btn-sm" ng-click="$ctrl.registerForExam(exam.id)" ng-if="!exam.registered">
+                                <i class="fas fa-check-circle me-1"></i>Register Now
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div ng-if="$ctrl.exams.length === 0">
+            <div class="empty-state">
+                <i class="fas fa-calendar-times"></i>
+                <h5>No Exams Available</h5>
+                <p>There are no exams available for your semester at the moment.</p>
+                <a href="#!/dashboard" class="btn btn-primary mt-2">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+        
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" ng-if="$ctrl.error">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <strong>Error Loading Exams!</strong> Please try again later.
+            <button type="button" class="btn-close" ng-click="$ctrl.error = false"></button>
+        </div>
+        
+        <!-- Quick Info -->
+        <div class="alert alert-info alert-dismissible fade show mt-3" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Note:</strong> You can only cancel registrations within 5 days of registration. Cancellation is not allowed after that period.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <div class="text-center mt-3">
+            <a href="#!/myexams" class="btn btn-info me-2">
+                <i class="fas fa-eye me-2"></i>View My Registered Exams
+            </a>
+            <a href="#!/dashboard" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+            </a>
+        </div>
+        
+    </div>
+</div>

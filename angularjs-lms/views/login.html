@@ -1,0 +1,64 @@
+<!-- Login View — matches app/login/page.tsx structure exactly -->
+<div class="login-page">
+  <div style="width:100%; max-width:28rem;">
+
+    <!-- Logo block (matches the flex flex-col items-center mb-8 block) -->
+    <div class="flex flex-col items-center mb-8">
+      <div class="flex h-14 w-14 items-center justify-content-center rounded-xl bg-primary"
+           style="display:flex;align-items:center;justify-content:center;">
+        <i class="bi bi-book-half" style="font-size:1.75rem;color:var(--primary-foreground);"></i>
+      </div>
+      <h1 class="mt-4 text-2xl font-bold text-foreground">LibraryMS</h1>
+      <p class="text-muted-foreground">Library Management System</p>
+    </div>
+
+    <!-- Card (border-border bg-card) -->
+    <div class="card border-border bg-card">
+      <div class="card-header">
+        <p class="card-title text-card-foreground">Sign in</p>
+        <p class="card-description">Enter your credentials to access the system</p>
+      </div>
+
+      <div class="card-content">
+        <!-- Error alert -->
+        <div class="alert alert-destructive mb-4" ng-if="error">
+          <i class="bi bi-exclamation-circle" style="flex-shrink:0;margin-top:1px;"></i>
+          <span>{{ error }}</span>
+        </div>
+
+        <!-- Form -->
+        <form ng-submit="login()" class="space-y-4" novalidate>
+          <div class="space-y-2">
+            <label for="email" class="label">Email</label>
+            <input id="email" type="email" class="input bg-input"
+                   placeholder="admin@library.com"
+                   ng-model="credentials.email" required />
+          </div>
+
+          <div class="space-y-2">
+            <label for="password" class="label">Password</label>
+            <input id="password" type="password" class="input bg-input"
+                   placeholder="Enter your password"
+                   ng-model="credentials.password" required />
+          </div>
+
+          <button type="submit" class="btn btn-default w-full" ng-disabled="loading">
+            <span class="spinner" style="width:14px;height:14px;border-width:2px;" ng-if="loading"></span>
+            {{ loading ? 'Signing in...' : 'Sign in' }}
+          </button>
+        </form>
+
+        <!-- Demo accounts box (mt-6 rounded-lg border border-border bg-secondary/50 p-4) -->
+        <div class="mt-6 rounded-lg border border-border bg-secondary\/50" style="padding:1rem;">
+          <p class="mb-2 text-sm font-medium text-card-foreground">Demo Accounts:</p>
+          <div class="space-y-1 text-xs text-muted-foreground">
+            <p><span class="font-medium">Admin:</span> admin@library.com / admin123</p>
+            <p><span class="font-medium">Librarian:</span> librarian@library.com / librarian123</p>
+            <p><span class="font-medium">Member:</span> member@library.com / member123</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,189 @@
+<!-- Transactions View — matches app/dashboard/transactions with exact original class names -->
+<div class="dashboard-layout">
+  <div ng-include="'views/partials/sidebar.html'"></div>
+
+  <main class="dashboard-main">
+    <header class="page-header">
+      <div>
+        <h1 class="text-xl font-semibold text-foreground">Issue / Return</h1>
+        <p class="text-sm text-muted-foreground">Manage book transactions and fines</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="header-search">
+          <i class="bi bi-search search-icon"></i>
+          <input type="search" placeholder="Search..." />
+        </div>
+        <div class="relative" style="position:relative;">
+          <button class="bell-btn" ng-click="showNotif=!showNotif">
+            <i class="bi bi-bell" style="font-size:1.25rem;"></i>
+          </button>
+          <span class="bell-badge">3</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="p-6">
+
+      <!-- Alert -->
+      <div class="alert mb-4"
+           ng-if="alert"
+           ng-class="{
+             'alert-destructive': alert.type==='danger',
+             '': alert.type!=='danger'
+           }"
+           ng-style="alert.type!=='danger' ? {'border-color':'var(--success)','background':'color-mix(in oklch, var(--success) 10%, transparent)','color':'var(--success)'} : {}">
+        <i class="bi" ng-class="{'bi-exclamation-circle':alert.type==='danger','bi-check-circle':alert.type!=='danger'}"></i>
+        <span>{{ alert.msg }}</span>
+      </div>
+
+      <!-- Tab bar -->
+      <div class="flex gap-2 mb-6">
+        <button class="btn" ng-class="activeTab==='list' ? 'btn-default' : 'btn-outline'"
+                ng-click="setTab('list')">
+          <i class="bi bi-list-ul"></i>All Transactions
+        </button>
+        <button class="btn" ng-class="activeTab==='issue' ? 'btn-default' : 'btn-outline'"
+                ng-click="setTab('issue')">
+          <i class="bi bi-book"></i>Issue Book
+        </button>
+        <button class="btn" ng-class="activeTab==='return' ? 'btn-default' : 'btn-outline'"
+                ng-click="setTab('return')">
+          <i class="bi bi-arrow-return-left"></i>Return Book
+        </button>
+      </div>
+
+      <!-- Issue Book -->
+      <div class="card border-border bg-card mb-6" ng-if="activeTab==='issue'">
+        <div class="card-header">
+          <p class="card-title text-card-foreground">Issue a Book</p>
+          <p class="card-description">Select a book and member to create a new transaction</p>
+        </div>
+        <div class="card-content">
+          <form ng-submit="issueBook()" class="space-y-4" novalidate>
+            <div class="grid gap-4" style="grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));">
+              <div class="space-y-2">
+                <label class="label">Select Book *</label>
+                <select class="input bg-input" ng-model="issueForm.bookId" required>
+                  <option value="">— Choose a book —</option>
+                  <option ng-repeat="b in books" value="{{ b.id }}"
+                          ng-disabled="b.availableCopies === 0">
+                    {{ b.title }} ({{ b.availableCopies }} available)
+                  </option>
+                </select>
+              </div>
+              <div class="space-y-2">
+                <label class="label">Select Member *</label>
+                <select class="input bg-input" ng-model="issueForm.memberId" required>
+                  <option value="">— Choose a member —</option>
+                  <option ng-repeat="m in members" value="{{ m.id }}">{{ m.name }}</option>
+                </select>
+              </div>
+              <div class="space-y-2">
+                <label class="label">Due Date *</label>
+                <input type="date" class="input bg-input" ng-model="issueForm.dueDate" required />
+              </div>
+            </div>
+            <div class="flex justify-end">
+              <button type="submit" class="btn btn-default">
+                <i class="bi bi-check2-circle"></i>Issue Book
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Return Book -->
+      <div class="card border-border bg-card mb-6" ng-if="activeTab==='return'">
+        <div class="card-header">
+          <p class="card-title text-card-foreground">Return a Book</p>
+          <p class="card-description">Select an active transaction to process the return</p>
+        </div>
+        <div class="card-content">
+          <form ng-submit="returnBook()" class="space-y-4" novalidate>
+            <div class="space-y-2">
+              <label class="label">Select Active Transaction *</label>
+              <select class="input bg-input" ng-model="returnForm.transactionId" required>
+                <option value="">— Choose a transaction —</option>
+                <option ng-repeat="tx in activeTransactions()" value="{{ tx.id }}">
+                  {{ getBookTitle(tx.bookId) }} → {{ getMemberName(tx.memberId) }} (due: {{ tx.dueDate }})
+                </option>
+              </select>
+            </div>
+            <div class="flex justify-end">
+              <button type="submit" class="btn btn-outline">
+                <i class="bi bi-arrow-return-left"></i>Process Return
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- All Transactions Table -->
+      <div class="card border-border bg-card" ng-if="activeTab==='list'">
+        <div class="card-header">
+          <p class="card-title text-card-foreground">All Transactions</p>
+        </div>
+        <div class="card-content" style="padding:0;overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th class="pb-3 text-left text-sm font-medium text-muted-foreground">Book</th>
+                <th class="pb-3 text-left text-sm font-medium text-muted-foreground">Member</th>
+                <th class="pb-3 text-left text-sm font-medium text-muted-foreground">Issue Date</th>
+                <th class="pb-3 text-left text-sm font-medium text-muted-foreground">Due Date</th>
+                <th class="pb-3 text-left text-sm font-medium text-muted-foreground">Return Date</th>
+                <th class="pb-3 text-left text-sm font-medium text-muted-foreground">Status</th>
+                <th class="pb-3 text-right text-sm font-medium text-muted-foreground">Fine</th>
+                <th class="pb-3 text-right text-sm font-medium text-muted-foreground">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-if="transactions.length === 0">
+                <td colspan="8" class="py-8 text-center text-muted-foreground">No transactions yet</td>
+              </tr>
+              <tr ng-repeat="tx in transactions">
+                <td class="py-4 font-medium text-card-foreground">{{ getBookTitle(tx.bookId) }}</td>
+                <td class="py-4 text-muted-foreground">{{ getMemberName(tx.memberId) }}</td>
+                <td class="py-4 text-muted-foreground text-sm">{{ tx.issueDate }}</td>
+                <td class="py-4 text-muted-foreground text-sm">{{ tx.dueDate }}</td>
+                <td class="py-4 text-muted-foreground text-sm">{{ tx.returnDate || '—' }}</td>
+                <td class="py-4">
+                  <span class="badge"
+                    ng-class="{'badge-outline':tx.status==='returned','badge-destructive':tx.status==='overdue','badge-default':tx.status==='issued'}">
+                    {{ tx.status }}
+                  </span>
+                </td>
+                <td class="py-4 text-right">
+                  <span ng-if="tx.fine > 0">
+                    <span ng-class="{'text-success':tx.finePaid,'text-destructive':!tx.finePaid}" class="font-medium">
+                      ₹{{ tx.fine.toFixed(2) }}
+                    </span>
+                    <span class="badge ml-1"
+                          ng-class="{'badge-success':tx.finePaid,'badge-destructive':!tx.finePaid}">
+                      {{ tx.finePaid ? 'Paid' : 'Unpaid' }}
+                    </span>
+                  </span>
+                  <span ng-if="tx.fine === 0" class="text-muted-foreground">—</span>
+                </td>
+                <td class="py-4" style="text-align:right;">
+                  <button class="btn btn-outline btn-xs" style="margin-right:0.25rem;"
+                          ng-if="tx.status !== 'returned'"
+                          ng-click="openReturn(tx)" title="Return book">
+                    <i class="bi bi-arrow-return-left"></i>
+                  </button>
+                  <button class="btn btn-xs"
+                          style="border-color:var(--success);color:var(--success);background:transparent;"
+                          ng-if="tx.fine > 0 && !tx.finePaid"
+                          ng-click="payFine(tx)" title="Pay fine">
+                    <i class="bi bi-currency-rupee"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>

@@ -1,0 +1,156 @@
+<!-- Books View — matches app/dashboard/books structure with exact original class names -->
+<div class="dashboard-layout">
+  <div ng-include="'views/partials/sidebar.html'"></div>
+
+  <main class="dashboard-main">
+    <header class="page-header">
+      <div>
+        <h1 class="text-xl font-semibold text-foreground">Books</h1>
+        <p class="text-sm text-muted-foreground">Manage your library's book catalogue</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="header-search">
+          <i class="bi bi-search search-icon"></i>
+          <input type="search" placeholder="Search..." ng-model="searchQuery" ng-keyup="search()" />
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+          <button class="btn btn-default" ng-click="triggerBooksCsvUpload()" ng-disabled="!canAdd">
+            <i class="bi bi-file-earmark-arrow-up"></i> Import CSV
+          </button>
+          <input id="booksCsvInput" type="file" accept=".csv" style="display:none;" onchange="angular.element(this).scope().importBooksCSV(event)" />
+          <button class="btn btn-default" ng-click="openAddForm()" ng-if="canAdd">
+            <i class="bi bi-plus-lg"></i> Add Book
+          </button>
+        </div>
+        <div class="relative" style="position:relative;">
+          <button class="bell-btn" ng-click="showNotif=!showNotif">
+            <i class="bi bi-bell" style="font-size:1.25rem;"></i>
+          </button>
+          <span class="bell-badge">3</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="p-6">
+      <div class="mb-4">
+        <p class="text-sm text-muted-foreground">Role access: <strong>{{ currentUser.role }}</strong> —
+          Admin: full access, Librarian: add/edit (no delete), Member: view-only</p>
+      </div>
+
+      <!-- Alert -->
+      <div class="alert alert-destructive mb-4" ng-if="alert && alert.type==='error'">
+        <i class="bi bi-exclamation-circle"></i>
+        <span>{{ alert.msg }}</span>
+      </div>
+      <div class="alert mb-4"
+           style="border-color:var(--success);background:color-mix(in oklch, var(--success) 10%, transparent);color:var(--success);"
+           ng-if="alert && alert.type==='success'">
+        <i class="bi bi-check-circle"></i>
+        <span>{{ alert.msg }}</span>
+      </div>
+
+      <!-- Add / Edit Form -->
+      <div class="card border-border bg-card mb-6" ng-if="showForm">
+        <div class="card-header">
+          <p class="card-title text-card-foreground">{{ editMode ? 'Edit Book' : 'Add New Book' }}</p>
+        </div>
+        <div class="card-content">
+          <form ng-submit="saveBook()" class="space-y-4" novalidate>
+            <div class="grid gap-4" style="grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));">
+              <div class="space-y-2">
+                <label class="label">Title *</label>
+                <input class="input bg-input" ng-model="form.title" required placeholder="Book title" />
+              </div>
+              <div class="space-y-2">
+                <label class="label">Author *</label>
+                <input class="input bg-input" ng-model="form.author" required placeholder="Author name" />
+              </div>
+              <div class="space-y-2">
+                <label class="label">ISBN *</label>
+                <input class="input bg-input" ng-model="form.isbn" required placeholder="978-..." />
+              </div>
+              <div class="space-y-2">
+                <label class="label">Category</label>
+                <input class="input bg-input" ng-model="form.category" placeholder="Fiction, Technology…" />
+              </div>
+              <div class="space-y-2">
+                <label class="label">Publisher</label>
+                <input class="input bg-input" ng-model="form.publisher" placeholder="Publisher name" />
+              </div>
+              <div class="space-y-2">
+                <label class="label">Publish Year</label>
+                <input type="number" class="input bg-input" ng-model="form.publishYear" placeholder="2024" />
+              </div>
+              <div class="space-y-2">
+                <label class="label">Total Copies</label>
+                <input type="number" class="input bg-input" ng-model="form.totalCopies" min="1" />
+              </div>
+              <div class="space-y-2">
+                <label class="label">Available Copies</label>
+                <input type="number" class="input bg-input" ng-model="form.availableCopies" min="0" />
+              </div>
+              <div class="space-y-2">
+                <label class="label">Shelf Location</label>
+                <input class="input bg-input" ng-model="form.location" placeholder="A-1-01" />
+              </div>
+            </div>
+            <div class="flex justify-end gap-2">
+              <button type="button" class="btn btn-outline" ng-click="cancelForm()">Cancel</button>
+              <button type="submit" class="btn btn-default">
+                {{ editMode ? 'Update Book' : 'Add Book' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Books table -->
+      <div class="card border-border bg-card">
+        <div class="card-content" style="padding:0;overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th class="pb-3 text-left text-sm font-medium text-muted-foreground">Title</th>
+                <th class="pb-3 text-left text-sm font-medium text-muted-foreground">Author</th>
+                <th class="pb-3 text-left text-sm font-medium text-muted-foreground">ISBN</th>
+                <th class="pb-3 text-left text-sm font-medium text-muted-foreground">Category</th>
+                <th class="pb-3 text-left text-sm font-medium text-muted-foreground">Total</th>
+                <th class="pb-3 text-left text-sm font-medium text-muted-foreground">Available</th>
+                <th class="pb-3 text-left text-sm font-medium text-muted-foreground">Location</th>
+                <th class="pb-3 text-right text-sm font-medium text-muted-foreground">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-if="books.length === 0">
+                <td colspan="8" class="py-8 text-center text-muted-foreground">No books found</td>
+              </tr>
+              <tr ng-repeat="book in books">
+                <td class="py-4 text-card-foreground font-medium">{{ book.title }}</td>
+                <td class="py-4 text-muted-foreground">{{ book.author }}</td>
+                <td class="py-4 text-muted-foreground font-mono text-xs">{{ book.isbn }}</td>
+                <td class="py-4">
+                  <span class="badge badge-secondary">{{ book.category }}</span>
+                </td>
+                <td class="py-4 text-card-foreground">{{ book.totalCopies }}</td>
+                <td class="py-4 font-medium"
+                    ng-class="{'text-destructive': book.availableCopies===0, 'text-success': book.availableCopies>1, 'text-warning': book.availableCopies===1}">
+                  {{ book.availableCopies }}
+                </td>
+                <td class="py-4 text-muted-foreground text-xs">{{ book.location }}</td>
+                <td class="py-4" style="text-align:right;">
+                  <button class="btn btn-outline btn-xs" style="margin-right:0.25rem;" ng-click="openEditForm(book)" title="Edit" ng-if="canAdd">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn btn-xs" style="border-color:var(--destructive);color:var(--destructive);background:transparent;" ng-click="deleteBook(book)" title="Delete" ng-if="canDelete">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>

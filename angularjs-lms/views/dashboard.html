@@ -1,0 +1,230 @@
+<!-- Dashboard View — matches app/dashboard/page.tsx structure exactly -->
+<div class="dashboard-layout">
+  <!-- Sidebar (ng-include) -->
+  <div ng-include="'views/partials/sidebar.html'"></div>
+
+  <!-- main (ml-64) -->
+  <main class="dashboard-main">
+
+    <!-- Header (matches header.tsx: flex h-16 items-center justify-between border-b bg-card px-6) -->
+    <header class="page-header">
+      <div>
+        <h1 class="text-xl font-semibold text-foreground">Dashboard</h1>
+        <p class="text-sm text-muted-foreground">Welcome back! Here's your library overview.</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="header-search">
+          <i class="bi bi-search search-icon"></i>
+          <input type="search" placeholder="Search..." ng-model="globalSearch" />
+        </div>
+        <div class="relative" style="position:relative;">
+          <button class="bell-btn" ng-click="showNotif=!showNotif">
+            <i class="bi bi-bell" style="font-size:1.25rem;"></i>
+          </button>
+          <span class="bell-badge">3</span>
+          <div class="notif-dropdown" ng-if="showNotif">
+            <div class="notif-header">
+              <h3 class="font-semibold text-foreground">Notifications</h3>
+              <button class="btn-ghost" style="background:none;border:none;cursor:pointer;color:var(--muted-foreground);" ng-click="showNotif=false">
+                <i class="bi bi-x"></i>
+              </button>
+            </div>
+            <div style="max-height:24rem;overflow-y:auto;padding:0.5rem;">
+              <div class="notif-item">
+                <p class="text-sm font-medium text-foreground">Pending Book Returns</p>
+                <p class="text-xs text-muted-foreground">{{ stats.overdueBooks }} members have overdue books</p>
+              </div>
+              <div class="notif-item">
+                <p class="text-sm font-medium text-foreground">Outstanding Fines</p>
+                <p class="text-xs text-muted-foreground">₹{{ stats.pendingFines.toFixed(2) }} in pending fines</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="p-6">
+      <!-- Stats grid (grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6) -->
+      <div class="grid gap-6" style="grid-template-columns:repeat(auto-fill, minmax(195px, 1fr));">
+
+        <!-- Total Books -->
+        <div class="stats-card">
+          <div class="stats-header">
+            <div>
+              <p class="stats-title">Total Books</p>
+              <p class="stats-value">{{ stats.totalBooks }}</p>
+              <p class="stats-subtitle">In collection</p>
+            </div>
+            <div class="stats-icon-wrap variant-default">
+              <i class="bi bi-book-open"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total Members -->
+        <div class="stats-card">
+          <div class="stats-header">
+            <div>
+              <p class="stats-title">Total Members</p>
+              <p class="stats-value">{{ stats.totalMembers }}</p>
+              <p class="stats-subtitle">Registered</p>
+            </div>
+            <div class="stats-icon-wrap variant-default">
+              <i class="bi bi-people"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Issued Books -->
+        <div class="stats-card">
+          <div class="stats-header">
+            <div>
+              <p class="stats-title">Issued Books</p>
+              <p class="stats-value">{{ stats.issuedBooks }}</p>
+              <p class="stats-subtitle">Currently out</p>
+            </div>
+            <div class="stats-icon-wrap variant-success">
+              <i class="bi bi-arrow-left-right"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Overdue Books -->
+        <div class="stats-card">
+          <div class="stats-header">
+            <div>
+              <p class="stats-title">Overdue Books</p>
+              <p class="stats-value">{{ stats.overdueBooks }}</p>
+              <p class="stats-subtitle">Require attention</p>
+            </div>
+            <div class="stats-icon-wrap variant-destructive">
+              <i class="bi bi-exclamation-triangle"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fines Collected -->
+        <div class="stats-card">
+          <div class="stats-header">
+            <div>
+              <p class="stats-title">Fines Collected</p>
+              <p class="stats-value">₹{{ stats.totalFinesCollected.toFixed(2) }}</p>
+              <p class="stats-subtitle">Total collected</p>
+            </div>
+            <div class="stats-icon-wrap variant-success">
+              <i class="bi bi-currency-rupee"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pending Fines -->
+        <div class="stats-card">
+          <div class="stats-header">
+            <div>
+              <p class="stats-title">Pending Fines</p>
+              <p class="stats-value">₹{{ stats.pendingFines.toFixed(2) }}</p>
+              <p class="stats-subtitle">To be collected</p>
+            </div>
+            <div class="stats-icon-wrap variant-warning">
+              <i class="bi bi-clock"></i>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /stats grid -->
+
+      <!-- mt-8 grid gap-6 lg:grid-cols-2 -->
+      <div class="mt-8 grid gap-6" style="grid-template-columns:repeat(auto-fit, minmax(340px, 1fr));">
+
+        <!-- Recent Transactions Card -->
+        <div class="card border-border bg-card">
+          <div class="card-header">
+            <p class="card-title text-card-foreground">Recent Transactions</p>
+          </div>
+          <div class="card-content">
+            <div class="space-y-4">
+              <p class="text-center text-muted-foreground" ng-if="recentTransactions.length === 0">No transactions yet</p>
+              <div class="tx-row" ng-repeat="tx in recentTransactions">
+                <div>
+                  <p class="font-medium text-card-foreground">{{ getBookTitle(tx.bookId) }}</p>
+                  <p class="text-sm text-muted-foreground">{{ getMemberName(tx.memberId) }}</p>
+                </div>
+                <div class="text-right">
+                  <span class="badge"
+                    ng-class="{'badge-outline':tx.status==='returned','badge-destructive':tx.status==='overdue','badge-default':tx.status==='issued'}">
+                    {{ tx.status }}
+                  </span>
+                  <p class="mt-1 text-xs text-muted-foreground">Due: {{ tx.dueDate }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Low Stock Books Card -->
+        <div class="card border-border bg-card">
+          <div class="card-header">
+            <p class="card-title text-card-foreground">Low Stock Books</p>
+          </div>
+          <div class="card-content">
+            <div class="space-y-4">
+              <p class="text-center text-muted-foreground" ng-if="lowStockBooks.length === 0">All books well stocked</p>
+              <div class="tx-row" ng-repeat="book in lowStockBooks">
+                <div>
+                  <p class="font-medium text-card-foreground">{{ book.title }}</p>
+                  <p class="text-sm text-muted-foreground">{{ book.author }}</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-3xl font-bold"
+                     ng-class="{'text-destructive': book.availableCopies===0, 'text-warning': book.availableCopies===1}">
+                    {{ book.availableCopies }}
+                  </p>
+                  <p class="text-xs text-muted-foreground">Available</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /two col grid -->
+
+      <!-- Members with Pending Fines (mt-8) -->
+      <div class="mt-8">
+        <div class="card border-border bg-card">
+          <div class="card-header">
+            <p class="card-title text-card-foreground">Members with Pending Fines</p>
+          </div>
+          <div class="card-content" style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th class="pb-3 text-left text-sm font-medium text-muted-foreground">Member</th>
+                  <th class="pb-3 text-left text-sm font-medium text-muted-foreground">Email</th>
+                  <th class="pb-3 text-left text-sm font-medium text-muted-foreground">Membership</th>
+                  <th class="pb-3 text-right text-sm font-medium text-muted-foreground">Pending Fine</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="m in membersWithFines">
+                  <td class="py-4 text-card-foreground">{{ m.name }}</td>
+                  <td class="py-4 text-muted-foreground">{{ m.email }}</td>
+                  <td class="py-4">
+                    <span class="badge badge-outline capitalize">{{ m.membershipType }}</span>
+                  </td>
+                  <td class="py-4 text-right font-medium text-destructive">
+                    ₹{{ pendingFine(m) }}
+                  </td>
+                </tr>
+                <tr ng-if="membersWithFines.length === 0">
+                  <td colspan="4" class="py-8 text-center text-muted-foreground">No pending fines</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /p-6 -->
+  </main>
+</div>
